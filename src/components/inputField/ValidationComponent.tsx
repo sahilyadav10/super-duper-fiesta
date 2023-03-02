@@ -1,10 +1,15 @@
 import React from "react";
 import validateEmail from "../../utils/validateEmail";
 
-type Props = {
-  type: "email" | "password";
-  strength: number | undefined;
-};
+type Props =
+  | {
+      type: "email";
+      strength: undefined;
+    }
+  | {
+      type: "password";
+      strength: number;
+    };
 
 export default function strengthComponent({ type, strength }: Props) {
   if (type === "password") {
