@@ -6,18 +6,31 @@ import validateEmail from "../../utils/validateEmail";
 import ValidationComponent from "./ValidationComponent";
 import validatePassword from "../../utils/validatePassword";
 
-type Props = {
-  label: string;
-  required: boolean;
-  state: string;
-  strength?: number;
-  isValid: boolean;
-  hasValidation: boolean;
-  handleValidation: (arg1: "email" | "password", arg2: string) => void;
-  type: "email" | "password";
-  id: string;
-  handleChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
-};
+type Props =
+  | {
+      label: string;
+      required: boolean;
+      state: string;
+      strength?: undefined;
+      isValid: boolean;
+      hasValidation: boolean;
+      handleValidation: (arg1: "email" | "password", arg2: string) => void;
+      type: "email";
+      id: string;
+      handleChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
+    }
+  | {
+      label: string;
+      required: boolean;
+      state: string;
+      strength: number;
+      isValid: boolean;
+      hasValidation: boolean;
+      handleValidation: (arg1: "email" | "password", arg2: string) => void;
+      type: "password";
+      id: string;
+      handleChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
+    };
 
 export default function InputField({
   label,
