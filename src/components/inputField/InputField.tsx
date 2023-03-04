@@ -9,25 +9,25 @@ import validatePassword from "../../utils/validatePassword";
 type Props =
   | {
       label: string;
-      required: boolean;
-      state: string;
-      strength?: undefined;
-      isValid: boolean;
       placeholder: string;
+      required?: boolean;
+      state: string;
       hasValidation: false;
-      handleValidation: (...arg: any[]) => void;
+      strength?: undefined;
+      isValid?: boolean;
+      handleValidation?: (...arg: any[]) => void;
       type: "text";
       id: string;
       handleChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
     }
   | {
       label: string;
-      required: boolean;
+      placeholder: string;
+      required?: boolean;
       state: string;
+      hasValidation: boolean;
       strength?: undefined;
       isValid: boolean;
-      placeholder: string;
-      hasValidation: boolean;
       handleValidation: (arg1: "email", arg2: string) => void;
       type: "email";
       id: string;
@@ -35,12 +35,12 @@ type Props =
     }
   | {
       label: string;
-      required: boolean;
+      placeholder: string;
+      required?: boolean;
       state: string;
+      hasValidation: boolean;
       strength: number;
       isValid: boolean;
-      placeholder: string;
-      hasValidation: boolean;
       handleValidation: (arg1: "password", arg2: string) => void;
       type: "password";
       id: string;
@@ -95,7 +95,7 @@ export default function InputField({
               : "password"
           }
           onBlur={() => {
-            hasValidation && type !== "text"
+            hasValidation && (type === "email" || type === "password")
               ? handleValidation(type, state)
               : null;
           }}
@@ -111,7 +111,7 @@ export default function InputField({
           </>
         ) : (
           <>
-            {hasValidation && !isValid && state && (
+            {hasValidation && !isValid && state && type === "email" && (
               <ValidationComponent type={type} strength={strength} />
             )}
           </>

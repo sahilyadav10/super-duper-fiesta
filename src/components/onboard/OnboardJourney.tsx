@@ -32,14 +32,26 @@ export default function OnboardJourney() {
     postalCode: "",
   });
 
-  const handleFormInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFormInput = (
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const input = event.target.value.trimStart();
     const field = event.target.id;
 
-    setFormData((prevState) => ({
-      ...prevState,
-      [field]: input,
-    }));
+    if (field === "country") {
+      setFormData((prevState) => ({
+        ...prevState,
+        [field]: input,
+        state: "",
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [field]: input,
+      }));
+    }
   };
 
   const journey = (): JSX.Element => {
