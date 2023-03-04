@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 import TheraIcon from "../../../public/thera_icon.webp";
@@ -6,8 +7,10 @@ import validateEmail from "../../utils/validateEmail";
 import validatePassword from "../../utils/validatePassword";
 import PrimaryButton from "../button/PrimaryButton";
 import InputField from "../inputField/InputField";
+import CircularLoader from "../loader/CircularLoader";
 const Login = () => {
-  // const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
+  const router = useRouter();
 
   const [email, setEmail] = useState({ value: "", isValid: false });
   const [password, setPassword] = useState({
@@ -15,6 +18,7 @@ const Login = () => {
     isValid: false,
     strength: 0,
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const input = event.target.value.trim();
@@ -34,29 +38,56 @@ const Login = () => {
         setEmail((prevState) => ({ ...prevState, isValid: true }));
       }
     } else if (type === "password") {
-      const strength = validatePassword(state);
-      if (!state) {
-        setPassword((prevState) => ({
-          ...prevState,
-          isValid: false,
-          strength: 0,
-        }));
-      } else {
-        if (strength > 2) {
-          setPassword((prevState) => ({
-            ...prevState,
-            isValid: true,
-            strength,
-          }));
-        } else {
-          setPassword((prevState) => ({
-            ...prevState,
-            isValid: false,
-            strength,
-          }));
-        }
+      if (state) {
+        setIsLoading(true);
+
+        setTimeout(() => {
+          const strength = validatePassword(state);
+          if (!state) {
+            setPassword((prevState) => ({
+              ...prevState,
+              isValid: false,
+              strength: 0,
+            }));
+          } else {
+            if (strength > 2) {
+              setPassword((prevState) => ({
+                ...prevState,
+                isValid: true,
+                strength,
+              }));
+            } else {
+              setPassword((prevState) => ({
+                ...prevState,
+                isValid: false,
+                strength,
+              }));
+            }
+          }
+          setIsLoading(false);
+        }, 3000);
       }
     }
+  };
+
+  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => {
+      const strength = validatePassword(password.value);
+      if (strength === 4) {
+        localStorage.setItem("isLoggedIn", "true");
+        router.push("onboard/");
+      } else {
+        setIsLoading(false);
+      }
+    }, 3000);
+  };
+
+  const handleFormType = () => {
+    setIsLogin((prevState) => !prevState);
+    setEmail((prevState) => ({ ...prevState, value: "" }));
+    setPassword((prevState) => ({ ...prevState, strength: 0, value: "" }));
   };
 
   return (
@@ -83,7 +114,7 @@ const Login = () => {
         <span className="h-px bg-gray-400 w-20"></span>
       </div>
 
-      <form action="/onboard" className="flex flex-col space-y-1 w-full">
+      <form className="flex flex-col space-y-1 w-full" onSubmit={handleLogin}>
         <InputField
           label="Email Address"
           placeholder={"Enter your Email"}
@@ -104,7 +135,7 @@ const Login = () => {
           state={password.value}
           strength={password.strength}
           isValid={password.isValid}
-          hasValidation={true}
+          hasValidation={!isLogin}
           handleValidation={handleValidation}
           type="password"
           id="password"
@@ -112,17 +143,44 @@ const Login = () => {
         />
 
         <div className="py-2">
-          <PrimaryButton
-            disabled={!email.isValid || !password.isValid}
-            type="submit"
-            label="Sign Up"
-          />
+          {isLoading ? (
+            <PrimaryButton
+              disabled={!email.isValid || !password.isValid}
+              type="submit"
+            >
+              <div className="flex justify-center">
+                <CircularLoader />
+              </div>
+            </PrimaryButton>
+          ) : (
+            <>
+              {isLogin ? (
+                <PrimaryButton
+                  disabled={!email.isValid || !password.value}
+                  type="submit"
+                >
+                  Login
+                </PrimaryButton>
+              ) : (
+                <PrimaryButton
+                  disabled={!email.isValid || !password.isValid}
+                  type="submit"
+                >
+                  Sign Up
+                </PrimaryButton>
+              )}
+            </>
+          )}
         </div>
-
         <div>
           <p className="text-center text-xs font-medium text-gray-400">
-            Alreay have an account?{" "}
-            <span className="underline text-black cursor-pointer">Log in</span>
+            {isLogin ? "Don't" : "Already"} have an account?{" "}
+            <span
+              className="underline text-black cursor-pointer"
+              onClick={handleFormType}
+            >
+              {isLogin ? "Sign Up" : "Log in"}
+            </span>
           </p>
         </div>
       </form>

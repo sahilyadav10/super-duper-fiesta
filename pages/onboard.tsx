@@ -1,7 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import CardLayout from "../src/components/layout/CardLayout";
-import JourneyLayout from "../src/components/layout/JourneyLayout";
 import OnboardJourney from "../src/components/onboard/OnboardJourney";
 
 const Onboard: NextPage = () => {

@@ -1,85 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import PrimaryButton from "../button/PrimaryButton";
 import InputField from "../inputField/InputField";
 import Select from "../inputField/Select";
+import CircularLoader from "../loader/CircularLoader";
 import { Form } from "./OnboardJourney";
 
-function hasStates(country: string): boolean {
-  if (
-    country === "United States" ||
-    country === "Australia" ||
-    country === "India"
-  ) {
-    return true;
-  }
-  return false;
-}
-
-const statesJSON = [
-  { label: "state 1", value: "state 1" },
-  { label: "state 2", value: "state 2" },
-  { label: "state 3", value: "state 3" },
-  { label: "state 4", value: "state 4" },
-  { label: "state 5", value: "state 5" },
-  { label: "state 6", value: "state 6" },
-];
-
 type Props = {
+  isLoading: boolean;
   formData: Form;
+  countries: {
+    isLoading: boolean;
+    payload: { label: string; value: string }[];
+  };
+  states: { isLoading: boolean; payload: { label: string; value: string }[] };
+  hasStates: boolean;
   handleFormInput: (
     arg:
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLSelectElement>
   ) => void;
-  handleNext: () => void;
 };
 
 export default function AddAddress({
+  isLoading,
   formData,
+  countries,
+  states,
+  hasStates,
   handleFormInput,
-  handleNext,
 }: Props) {
-  const [countries, setCountries] = useState({
-    isLoading: true,
-    payload: [{ label: "", value: "" }],
-  });
-  const [states, setStates] = useState({
-    hasState: false,
-    isLoading: true,
-    payload: [{ label: "", value: "" }],
-  });
-
-  useEffect(() => {
-    fetch("https://countriesnow.space/api/v0.1/countries/iso")
-      .then((response) => response.json())
-      .then((result) => {
-        const countries = result.data.map((country: { name: string }) => ({
-          label: country.name,
-          value: country.name,
-        }));
-        setCountries({ payload: countries, isLoading: false });
-      })
-      .catch((error) => console.log("error", error));
-  }, []);
-
-  useEffect(() => {
-    if (hasStates(formData.country)) {
-      setTimeout(() => {
-        setStates({
-          payload: [...statesJSON],
-          hasState: true,
-          isLoading: false,
-        });
-      }, 4000);
-    } else {
-      setStates({
-        isLoading: true,
-        payload: [{ label: "", value: "" }],
-        hasState: false,
-      });
-    }
-  }, [formData.country]);
-
   return (
     <>
       <div className="flex flex-col my-3">
@@ -92,11 +41,11 @@ export default function AddAddress({
           value={formData.country}
           handleChange={handleFormInput}
         />
-        {hasStates(formData.country) && (
+        {hasStates && (
           <Select
             label="State"
             id="state"
-            required={true}
+            required={false}
             isLoading={states.isLoading}
             options={states.payload}
             value={formData.state}
@@ -144,13 +93,35 @@ export default function AddAddress({
           handleChange={handleFormInput}
         />
         <div className="py-2">
-          <PrimaryButton
-            disabled={
-              !formData.city || !formData.address1 || !formData.postalCode
-            }
-            type="button"
-            label="Submit"
-          />
+          {isLoading ? (
+            <PrimaryButton
+              disabled={
+                !formData.city ||
+                !formData.address1 ||
+                !formData.postalCode ||
+                !formData.country
+              }
+              type="button"
+            >
+              <div className="flex justify-center">
+                <CircularLoader />
+              </div>
+            </PrimaryButton>
+          ) : (
+            <PrimaryButton
+              disabled={
+                !formData.city ||
+                !formData.address1 ||
+                !formData.postalCode ||
+                !formData.country
+              }
+              type="submit"
+              label="Submit"
+              // onClick={handleNext}
+            >
+              Submit
+            </PrimaryButton>
+          )}
         </div>
       </div>
     </>

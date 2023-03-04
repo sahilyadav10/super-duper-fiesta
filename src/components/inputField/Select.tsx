@@ -29,17 +29,28 @@ export default function Select({
         value={value}
         onChange={handleChange}
         id={id}
-        className="px-2 py-2 w-full transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-200"
+        className={`${
+          !value && "text-gray-400"
+        } px-2 py-2 w-full border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-200`}
       >
-        {isLoading ? (
-          <option value="loading" selected>
+        {isLoading && !value ? (
+          <option value="" selected>
             Loading....
           </option>
         ) : (
           <>
-            {options.map((option) => {
-              return <option value={option.value}>{option.label}</option>;
-            })}{" "}
+            {isLoading && value ? (
+              <option value={value}>{value}</option>
+            ) : (
+              <>
+                <option value="" selected disabled className="font-gray-200">
+                  {label}
+                </option>
+                {options.map((option) => {
+                  return <option value={option.value}>{option.label}</option>;
+                })}{" "}
+              </>
+            )}
           </>
         )}
       </select>

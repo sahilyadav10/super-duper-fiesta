@@ -72,7 +72,7 @@ export default function CreateCompany({
             disabled={
               !formData.firstName || !formData.lastName || !formData.companyName
             }
-            type="button"
+            type="submit"
             label="Continue"
             onClick={handleNext}
           />
