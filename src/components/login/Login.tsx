@@ -60,7 +60,7 @@ const Login = () => {
   };
 
   return (
-    <div className="p-5 text-center bg-white rounded-md shadow-md w-4/12">
+    <>
       <div className="my-4 flex justify-center">
         <Image src={TheraIcon} alt="Thera Logo" width={50} height={50} />
       </div>
@@ -83,9 +83,10 @@ const Login = () => {
         <span className="h-px bg-gray-400 w-20"></span>
       </div>
 
-      <form action="#" className="flex flex-col space-y-1 w-full">
+      <form action="/onboard" className="flex flex-col space-y-1 w-full">
         <InputField
           label="Email Address"
+          placeholder={"Enter your Email"}
           required={true}
           state={email.value}
           isValid={email.isValid}
@@ -98,6 +99,7 @@ const Login = () => {
 
         <InputField
           label="Password"
+          placeholder={"Enter your password"}
           required={true}
           state={password.value}
           strength={password.strength}
@@ -124,7 +126,7 @@ const Login = () => {
           </p>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

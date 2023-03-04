@@ -13,8 +13,22 @@ type Props =
       state: string;
       strength?: undefined;
       isValid: boolean;
+      placeholder: string;
+      hasValidation: false;
+      handleValidation: (...arg: any[]) => void;
+      type: "text";
+      id: string;
+      handleChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
+    }
+  | {
+      label: string;
+      required: boolean;
+      state: string;
+      strength?: undefined;
+      isValid: boolean;
+      placeholder: string;
       hasValidation: boolean;
-      handleValidation: (arg1: "email" | "password", arg2: string) => void;
+      handleValidation: (arg1: "email", arg2: string) => void;
       type: "email";
       id: string;
       handleChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
@@ -25,8 +39,9 @@ type Props =
       state: string;
       strength: number;
       isValid: boolean;
+      placeholder: string;
       hasValidation: boolean;
-      handleValidation: (arg1: "email" | "password", arg2: string) => void;
+      handleValidation: (arg1: "password", arg2: string) => void;
       type: "password";
       id: string;
       handleChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
@@ -38,8 +53,9 @@ export default function InputField({
   state,
   strength,
   isValid,
+  placeholder,
   hasValidation = false,
-  handleValidation,
+  handleValidation = () => {},
   type,
   id,
   handleChange,
@@ -71,12 +87,20 @@ export default function InputField({
         <input
           value={state}
           onChange={handleChange}
-          type={type === "email" ? "text" : isVisible ? "text" : "password"}
+          type={
+            type === "email" || type === "text"
+              ? "text"
+              : isVisible
+              ? "text"
+              : "password"
+          }
           onBlur={() => {
-            hasValidation ? handleValidation(type, state) : null;
+            hasValidation && type !== "text"
+              ? handleValidation(type, state)
+              : null;
           }}
           id={id}
-          placeholder={`Enter your ${label}`}
+          placeholder={placeholder}
           className="px-2 py-2 w-full transition duration-300 border border-gray-300 rounded focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-200"
         />
         {type === "password" ? (
